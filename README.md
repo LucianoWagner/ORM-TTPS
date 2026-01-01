@@ -6,14 +6,14 @@ Este proyecto es una aplicación backend desarrollada en **Java** con **Spring B
 
 ## 🚀 Tecnologías Utilizadas
 
-- **Java 17**
+- **Java 24** (Compatible con versiones anteriores mediante actualización de Lombok)
 - **Spring Boot 3.3.4**
 - **Spring Data JPA** (Hibernate)
 - **Spring Security** + **JWT** (JSON Web Tokens)
-- **MySQL** (Base de Datos)
-- **Lombok** (Reducción de código boilerplate)
+- **MySQL 8.0**
+- **Lombok 1.18.38** (Requerido para soporte de Java 24+)
 - **Jackson** (Mapeo de JSON a DTOs)
-- **Docker & Docker Compose** (Contenerización)
+- **Docker & Docker Compose** (Contenerización de DB)
 - **Maven** (Gestor de dependencias)
 
 ---
@@ -98,6 +98,52 @@ Esto levantará dos contenedores:
     ```bash
     mvn spring-boot:run
     ```
+
+## 🏁 Guía de Inicio Rápido
+
+Para poner en marcha todo el sistema, sigue este orden:
+
+### 1. Iniciar la Base de Datos (Docker)
+Asegúrate de tener Docker abierto y ejecuta en la raíz del backend:
+```bash
+docker-compose up -d
+```
+
+### 2. Iniciar el Backend (Spring Boot)
+Ejecuta el siguiente comando para compilar y arrancar la API. 
+*Nota: Se requiere Java 24 y el proyecto usa el puerto **3000**.*
+```bash
+./mvnw clean spring-boot:run
+```
+- **¿Cómo detenerlo?**: En la terminal donde está corriendo, presiona `Ctrl + C`. Si el puerto queda "trabado", asegúrate de cerrar la terminal o finalizar el proceso de Java.
+
+### 3. Poblar la Base de Datos (Seed)
+Una vez que el backend diga "Started Application", abre tu navegador en:
+👉 [http://localhost:3000/api/v1/seed](http://localhost:3000/api/v1/seed)
+- Si recibes un error 500 de "Duplicate entry", significa que la base **ya tiene los datos** y puedes continuar.
+
+### 4. Iniciar el Frontend (Angular)
+Abre otra terminal en la carpeta del frontend y ejecuta:
+```bash
+npm install
+npm start
+```
+Accede a [http://localhost:4200](http://localhost:4200).
+
+---
+
+## 🛠️ Solución de Problemas Frecuentes
+
+### Error: `com.sun.tools.javac.code.TypeTag :: UNKNOWN`
+Este error ocurre por usar Java 24 con una versión antigua de Lombok. El proyecto ha sido actualizado a **Lombok 1.18.38** para solucionar este conflicto. Asegúrate de que tu IDE también tenga actualizado el plugin de Lombok si es necesario.
+
+### Error: `Port 3000 already in use`
+Ocurre si ya tienes una instancia de la app corriendo. 
+1. Cierra todas las terminales.
+2. En Windows, puedes correr `Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -Force` en PowerShell para liberar el puerto.
+
+### SQL Error: `Duplicate entry 'CLIENT' for key 'roles...'`
+Esto sucede al ejecutar la `/seed` más de una vez. No es un error crítico; simplemente indica que los datos ya están en la base de datos.
 
 ---
 
