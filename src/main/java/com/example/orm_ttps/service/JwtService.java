@@ -8,8 +8,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import org.springframework.beans.factory.annotation.Value;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import java.util.function.Function;
 
 public class JwtService {
 
-    // Replace this with a secure key in a real application, ideally fetched from environment variables
-    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${application.security.jwt.secret-key}")
+    private String secretKey;
 
     // Generate token with given user name
     public String generateToken(String userName, List<String> permissions, String role) {
@@ -54,7 +54,7 @@ public class JwtService {
 
     // Get the signing key for JWT token
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -85,10 +85,8 @@ public class JwtService {
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             throw new CustomExpiredJwtException("Token expired");
 
-
         }
     }
-
 
     // Check if the token is expired
     private Boolean isTokenExpired(String token) {
@@ -100,7 +98,5 @@ public class JwtService {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
-
 
 }
