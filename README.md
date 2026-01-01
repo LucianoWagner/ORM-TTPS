@@ -11,12 +11,23 @@ Este proyecto es una aplicación backend desarrollada en **Java** con **Spring B
 - **Spring Data JPA** (Hibernate)
 - **Spring Security** + **JWT** (JSON Web Tokens)
 - **MySQL** (Base de Datos)
-- **Lombok**
+- **Lombok** (Reducción de código boilerplate)
+- **Jackson** (Mapeo de JSON a DTOs)
+- **Docker & Docker Compose** (Contenerización)
 - **Maven** (Gestor de dependencias)
 
 ---
 
-## 👥 Perfiles de Usuario
+## 🏗️ Arquitectura del Proyecto
+
+El sistema sigue una **Arquitectura en Capas**, promoviendo el desacoplamiento y la responsabilidad única:
+
+- **Controllers**: Puerta de entrada de la API. Manejan las solicitudes HTTP y delegan la lógica a los servicios.
+- **Services**: El "cerebro" del sistema. Contienen la lógica de negocio y validaciones (ej. reglas del buffet).
+- **Repositories**: Capa de acceso a datos utilizando Spring Data JPA.
+- **Models**: Entidades que representan las tablas en la DB. Se utiliza la estrategia de herencia `@Inheritance(strategy = InheritanceType.JOINED)` para `Product` y `Menu`, asegurando una base de datos normalizada.
+- **DTOs (Requests/Responses)**: Objetos para transferir datos de forma segura entre el cliente y el servidor, evitando exponer las entidades reales de la base de datos.
+- **Filters**: Interceptores de seguridad (JWT) que validan el token antes de procesar cualquier solicitud.
 
 El sistema cuenta con tres niveles de acceso definidos mediante roles (`Role.java`):
 
@@ -57,9 +68,21 @@ A continuación se detalla cómo se resolvieron los requerimientos solicitados e
 - **Autenticación**: Basada en tokens **JWT**. El sistema utiliza `@Value` para inyectar la clave secreta desde variables de entorno, evitando la exposición de claves en el código fuente.
 - **Configuración**: Se encuentra en `src/main/resources/application.properties`. Puedes configurar tu `JWT_SECRET` como variable de entorno.
 
+## 🐳 Ejecución con Docker
+
+El proyecto incluye una configuración de Docker para facilitar el despliegue del entorno:
+
+```bash
+docker-compose up --build
+```
+
+Esto levantará dos contenedores:
+1.  **db**: Base de datos MySQL 8.0 con persistencia de datos en volumen.
+2.  **app**: La aplicación Spring Boot lista para recibir peticiones en el puerto `8080`.
+
 ---
 
-## 🛠️ Instalación y Ejecución
+## 🛠️ Instalación y Ejecución Manual
 
 1.  Clonar el repositorio:
     ```bash
